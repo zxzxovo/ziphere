@@ -1,0 +1,30 @@
+[package]
+name = "ziphere"
+authors = ["Zhixia <zhixiaovo@gmail.com>"]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+keywords = ["compress", "decompress", "zip"]
+categories = ["filesystem", "compression"]
+description = "Support easy-to-use apis for compressing and decompressing"
+homepage = "https://zxzxovo.github.io/ziphere"
+documentation = "https://docs.rs/ziphere"
+repository = "https://github.com/zxzxovo/ziphere"
+
+[lib]
+name = "ziphere"
+path = "src/lib.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+overflow-checks = false
+codegen-units = 1
+strip = "debuginfo"
+
+[dependencies]
+thiserror = "2"
+
+
+[package.metadata.docs.rs]
+all-features = true
