@@ -15,6 +15,12 @@ repository = "https://github.com/zxzxovo/ziphere"
 name = "ziphere"
 path = "src/lib.rs"
 
+[features]
+default = ["all"]
+zip = []
+sevenz = ["sevenz-rust2/aes256", "sevenz-rust2/compress"]
+all = ["zip", "sevenz", ]
+
 [profile.release]
 opt-level = 3
 lto = true
@@ -24,6 +30,8 @@ strip = "debuginfo"
 
 [dependencies]
 thiserror = "2"
+sevenz-rust2 = "0.14.1"
+zip = "4.0.0"
 
 
 [package.metadata.docs.rs]
