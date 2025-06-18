@@ -5,8 +5,12 @@ use std::time::Duration;
 use crate::{Result};
 
 /// Common configs for compression or decompression.
-pub trait ComdeConfig {
+pub trait ComdeConfig: Sized {
+    /// Start building Config.
     fn new() -> Self;
+
+    /// Configure completed and get the result.
+    fn build(self) -> Result<Self>;
 }
 
 
@@ -54,4 +58,14 @@ pub struct DecompressStats {
     pub compressed_size: u64,
     pub decompressed_size: u64,
     pub time_cost: Duration,
+}
+
+impl DecompressStats {
+    pub(crate) fn new(compressed_size: u64, decompressed_size: u64, time_cost: Duration) -> Self {
+        Self {
+            compressed_size,
+            decompressed_size,
+            time_cost
+        }
+    }
 }
