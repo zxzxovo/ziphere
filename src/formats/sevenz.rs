@@ -66,10 +66,6 @@ impl comde::ComdeConfig for SevenzConfigs {
             methods: Vec::new(),
         }
     }
-
-    fn build(self) -> crate::Result<Self> {
-        Ok(self)
-    }
 }
 
 impl SevenzConfigs {
@@ -117,10 +113,6 @@ pub struct SevenzDeConfig {
 impl comde::ComdeConfig for SevenzDeConfig {
     fn new() -> SevenzDeConfig {
         SevenzDeConfig { password: None }
-    }
-
-    fn build(self) -> crate::Result<SevenzDeConfig> {
-        Ok(self)
     }
 }
 
