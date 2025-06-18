@@ -10,7 +10,7 @@ pub trait ComdeConfig: Sized {
     fn new() -> Self;
 
     /// Configure completed and get the result.
-    fn build(self) -> Result<Self>{
+    fn build(self) -> Result<Self> {
         Ok(self)
     }
 }
