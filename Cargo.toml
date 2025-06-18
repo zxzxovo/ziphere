@@ -32,9 +32,9 @@ strip = "debuginfo"
 
 [dependencies]
 thiserror = "2"
-walkdir = "2.5.0"
-sevenz-rust2 = "0.14.1"
-zip = "4.0.0"
+walkdir = "2.5"
+sevenz-rust2 = "0.14"
+zip = "4.1"
 
 
 [package.metadata.docs.rs]
