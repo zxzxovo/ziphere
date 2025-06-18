@@ -10,9 +10,9 @@ use crate::utils::calculate_size;
 use sevenz_rust2::SevenZMethodConfiguration;
 use std::path::Path;
 
-pub struct SevenzCompressor;
+pub struct SevenzComde;
 
-impl comde::Compress for SevenzCompressor {
+impl comde::Compress for SevenzComde {
     type Configs = SevenzConfigs;
 
     fn compress_file<P: AsRef<Path>>(
@@ -132,7 +132,7 @@ impl SevenzDeConfig {
     }
 }
 
-impl comde::Decompress for SevenzCompressor {
+impl comde::Decompress for SevenzComde {
     type Configs = SevenzDeConfig;
 
     fn decompress_file<P: AsRef<Path>>(
