@@ -103,6 +103,14 @@ impl SevenzConfigs {
         self.methods.push(m.into());
         self
     }
+    
+    /// Use Deflate with given compression level.
+    #[cfg(feature = "sevenz-deflate")]
+    pub fn use_deflate_with_level(mut self, level: u32) -> Self {
+        let m = sevenz_rust2::DeflateOptions::from_level(level);
+        self.methods.push(m.into());
+        self
+    }
 }
 
 /// Decompression configuration for 7z.
