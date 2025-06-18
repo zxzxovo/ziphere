@@ -20,7 +20,7 @@ default = ["all"]
 zip = []
 sevenz = ["sevenz-rust2/aes256", "sevenz-rust2/compress"]
 sevenz-zstd = ["sevenz", "sevenz-rust2/zstd"]
-sevenz-all = ["sevenz", "sevenz-zstd"]
+sevenz-all = ["sevenz-zstd"]
 all = ["zip", "sevenz-all", ]
 
 [profile.release]

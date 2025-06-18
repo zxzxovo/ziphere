@@ -1,12 +1,11 @@
 //! The mod contains a series of helper function
 //! that will be used in other mod.
 
-use std::os::linux::fs::MetadataExt;
 use crate::error::Error::IOError;
+use crate::error::IsIOError::{OnError, StdIoError, WalkError};
 use crate::error::Result;
 use std::path::Path;
 use walkdir::WalkDir;
-use crate::error::IsIOError::{OnError, StdIoError, WalkError};
 
 
 /// Calculate the size of the passing path.

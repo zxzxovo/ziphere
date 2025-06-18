@@ -7,8 +7,14 @@
 /// Error types.
 pub mod error;
 
-/// Compress.
-pub mod compressor;
+/// Compress and Decompress.
+pub mod comde;
 
-/// Decompress. 
-pub mod decompressor;
+/// Supported formats and functions;
+pub mod formats;
+
+/// Used utils
+mod utils;
+
+pub use error::Result;
+pub use formats::Formats;

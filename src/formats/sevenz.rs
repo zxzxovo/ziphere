@@ -1,12 +1,14 @@
 //! `.7z` format support.
 
-use std::path::PathBuf;
-use sevenz_rust2::SevenZMethodConfiguration;
+#![cfg(feature = "sevenz")]
+
 use crate::comde;
 use crate::comde::{CompressStats, DecompressStats};
-use crate::error::Error::{CompressError, IOError};
+use crate::error::Error::{CompressError, DecompressError, IOError};
 use crate::error::IsIOError::{OnError, StdIoError};
 use crate::utils::calculate_size;
+use sevenz_rust2::SevenZMethodConfiguration;
+use std::path::PathBuf;
 
 pub struct SevenzCompressor;
 
@@ -17,34 +19,35 @@ impl comde::Compress for SevenzCompressor {
         &self,
         input: PathBuf,
         output: PathBuf,
-        config: Self::Configs
+        config: Self::Configs,
     ) -> crate::Result<CompressStats> {
         if !input.exists() {
-            return Err(IOError(OnError("Path not exist.".to_string() )))
+            return Err(IOError(OnError("Path not exist.".to_string())));
         }
-        
+
         // Start timing.
         let start_time = std::time::Instant::now();
         let origin_size = calculate_size(&input)?;
         let mut writer = sevenz_rust2::SevenZWriter::create(&output)
             .map_err(|e| CompressError(e.to_string()))?;
-        
+
         writer.set_content_methods(config.methods);
-        
+
         // Do solid_compress if enable.
         if !config.solid_compress {
             writer.push_source_path_non_solid(&input, |_| true)
         } else {
             writer.push_source_path(&input, |_| true)
-        }.map_err(|e| CompressError(e.to_string() ))?;
-        
+        }
+        .map_err(|e| CompressError(e.to_string()))?;
+
         // Write and stop timing.
         writer.finish().map_err(|e| CompressError(e.to_string()))?;
-        let compressed_size = std::fs::metadata(output).map_err(|e|
-            IOError(StdIoError(e))
-        )?.len();
+        let compressed_size = std::fs::metadata(output)
+            .map_err(|e| IOError(StdIoError(e)))?
+            .len();
         let duration = start_time.elapsed();
-        
+
         Ok(CompressStats::new(origin_size, compressed_size, duration))
     }
 }
@@ -52,14 +55,14 @@ impl comde::Compress for SevenzCompressor {
 /// The compression configuration of 7z.
 pub struct SevenzConfigs {
     solid_compress: bool,
-    methods: Vec<SevenZMethodConfiguration>
+    methods: Vec<SevenZMethodConfiguration>,
 }
 
 impl comde::ComdeConfig for SevenzConfigs {
     fn new() -> SevenzConfigs {
         SevenzConfigs {
             solid_compress: false,
-            methods: Vec::new()
+            methods: Vec::new(),
         }
     }
 
@@ -71,10 +74,11 @@ impl comde::ComdeConfig for SevenzConfigs {
 impl SevenzConfigs {
     /// Encrypt with AES256.
     pub fn set_password(mut self, password: &str) -> Self {
-        self.methods.push(sevenz_rust2::AesEncoderOptions::new(password.into()).into());
+        self.methods
+            .push(sevenz_rust2::AesEncoderOptions::new(password.into()).into());
         self
     }
-    
+
     /// Call to enable solid compression.
     pub fn enable_solid_compress(mut self) -> Self {
         self.solid_compress = true;
@@ -87,7 +91,6 @@ impl SevenzConfigs {
         self.methods.push(m.into());
         self
     }
-
 
     /// Use LZMA2 with default arguments.
     pub fn use_lzma2_with_preset(mut self, preset: u32) -> Self {
@@ -103,14 +106,63 @@ impl SevenzConfigs {
         self.methods.push(m.into());
         self
     }
-
 }
 
+/// Decompression configuration for 7z.
+pub struct SevenzDeConfig {
+    password: Option<String>,
+}
+
+impl comde::ComdeConfig for SevenzDeConfig {
+    fn new() -> SevenzDeConfig {
+        SevenzDeConfig { password: None }
+    }
+
+    fn build(self) -> crate::Result<SevenzDeConfig> {
+        Ok(self)
+    }
+}
+
+impl SevenzDeConfig {
+    /// Decompress with password.
+    pub fn with_password(mut self, password: &str) -> SevenzDeConfig {
+        self.password = Some(password.into());
+        self
+    }
+}
 
 impl comde::Decompress for SevenzCompressor {
-    type Configs = SevenzConfigs;
+    type Configs = SevenzDeConfig;
 
-    fn decompress_file(input: PathBuf, output: PathBuf, config: Self::Configs) -> crate::Result<DecompressStats> {
-        todo!()
+    fn decompress_file(
+        input: PathBuf,
+        output: PathBuf,
+        config: Self::Configs,
+    ) -> crate::Result<DecompressStats> {
+        // start timing.
+        let start_time = std::time::Instant::now();
+        let compressed_size = std::fs::metadata(&input)
+            .map_err(|e| IOError(StdIoError(e)))?
+            .len();
+
+        match config.password {
+            Some(password) => sevenz_rust2::decompress_file_with_password(
+                &input,
+                &output,
+                password.as_str().into(),
+            )
+            .map_err(|e| DecompressError(e.to_string()))?,
+            None => sevenz_rust2::decompress_file(&output, &input)
+                .map_err(|e| DecompressError(e.to_string()))?,
+        }
+
+        // finish and stop timing.
+        let duration = start_time.elapsed();
+        let decompressed_size = calculate_size(&output)?;
+        Ok(DecompressStats::new(
+            compressed_size,
+            decompressed_size,
+            duration,
+        ))
     }
 }
