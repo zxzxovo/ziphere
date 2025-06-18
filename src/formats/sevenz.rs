@@ -8,19 +8,20 @@ use crate::error::Error::{CompressError, DecompressError, IOError};
 use crate::error::IsIOError::{OnError, StdIoError};
 use crate::utils::calculate_size;
 use sevenz_rust2::SevenZMethodConfiguration;
-use std::path::PathBuf;
+use std::path::Path;
 
 pub struct SevenzCompressor;
 
 impl comde::Compress for SevenzCompressor {
     type Configs = SevenzConfigs;
 
-    fn compress_file(
+    fn compress_file<P: AsRef<Path>>(
         &self,
-        input: PathBuf,
-        output: PathBuf,
+        input: P,
+        output: P,
         config: Self::Configs,
     ) -> crate::Result<CompressStats> {
+        let (input, output) = (input.as_ref(), output.as_ref());
         if !input.exists() {
             return Err(IOError(OnError("Path not exist.".to_string())));
         }
@@ -134,9 +135,9 @@ impl SevenzDeConfig {
 impl comde::Decompress for SevenzCompressor {
     type Configs = SevenzDeConfig;
 
-    fn decompress_file(
-        input: PathBuf,
-        output: PathBuf,
+    fn decompress_file<P: AsRef<Path>>(
+        input: P,
+        output: P,
         config: Self::Configs,
     ) -> crate::Result<DecompressStats> {
         // start timing.

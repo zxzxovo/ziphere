@@ -9,7 +9,8 @@ use walkdir::WalkDir;
 
 
 /// Calculate the size of the passing path.
-pub(crate) fn calculate_size(path: &Path) -> Result<u64> {
+pub(crate) fn calculate_size<P: AsRef<Path>>(path: P) -> Result<u64> {
+    let path = path.as_ref();
     if path.is_file() {
         Ok(std::fs::metadata(path).map_err(|e| IOError(StdIoError(e)))?.len() )
     } else if path.is_dir() {

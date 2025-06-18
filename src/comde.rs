@@ -1,7 +1,7 @@
 //! Operation define to compress and decompress.
 
 use crate::Result;
-use std::path::PathBuf;
+use std::path::Path;
 use std::time::Duration;
 
 /// Common configs for compression or decompression.
@@ -16,10 +16,10 @@ pub trait ComdeConfig: Sized {
 /// The formats that support `compress` option should implement.
 pub trait Compress {
     type Configs: ComdeConfig;
-    fn compress_file(
+    fn compress_file<P: AsRef<Path>>(
         &self,
-        input: PathBuf,
-        output: PathBuf,
+        input: P,
+        output: P,
         config: Self::Configs,
     ) -> Result<CompressStats>;
 }
@@ -44,9 +44,9 @@ impl CompressStats {
 /// The formats that support `decompress` option should implement.
 pub trait Decompress {
     type Configs: ComdeConfig;
-    fn decompress_file(
-        input: PathBuf,
-        output: PathBuf,
+    fn decompress_file<P: AsRef<Path>>(
+        input: P,
+        output: P,
         config: Self::Configs,
     ) -> Result<DecompressStats>;
 }
