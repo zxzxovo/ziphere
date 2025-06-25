@@ -115,11 +115,17 @@ impl ZipConfig {
         use CompressionMethod as cm;
         let m = match method {
             "store" => cm::Stored,
+
+            #[cfg(feature = "zip-zstd")]
             "zstd" => {
                 self.level_supported = true;
                 cm::Zstd
             }
+
+            #[cfg(feature = "zip-lzma")]
             "lzma" => cm::Lzma,
+
+            #[cfg(feature = "zip-deflate")]
             "deflate" => cm::Deflated,
             _ => cm::Stored,
         };
