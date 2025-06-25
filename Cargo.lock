@@ -627,6 +627,7 @@ dependencies = [
  "cbc",
  "crc32fast",
  "filetime_creation",
+ "flate2",
  "getrandom",
  "js-sys",
  "lzma-rust2",

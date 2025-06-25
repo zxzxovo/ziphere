@@ -4,6 +4,7 @@
 
 use crate::comde;
 use crate::comde::{CompressStats, DecompressStats};
+use crate::error::DecompError;
 use crate::error::Error::{CompressError, DecompressError, IOError};
 use crate::error::IsIOError::{OnError, StdIoError};
 use crate::utils::calculate_size;
@@ -110,7 +111,7 @@ impl SevenzConfigs {
         self.methods.push(m.into());
         self
     }
-    
+
     /// Use Deflate with given compression level.
     #[cfg(feature = "sevenz-deflate")]
     pub fn use_deflate_with_level(mut self, level: u32) -> Self {
@@ -153,15 +154,27 @@ impl comde::Decompress for SevenzComde {
             .map_err(|e| IOError(StdIoError(e)))?
             .len();
 
-        match config.password {
+        let result = match config.password.as_ref() {
             Some(password) => sevenz_rust2::decompress_file_with_password(
                 &input,
                 &output,
                 password.as_str().into(),
-            )
-            .map_err(|e| DecompressError(e.to_string()))?,
-            None => sevenz_rust2::decompress_file(&output, &input)
-                .map_err(|e| DecompressError(e.to_string()))?,
+            ),
+            None => sevenz_rust2::decompress_file(&input, &output),
+        };
+
+        // Handle specific 7z errors
+        if let Err(e) = result {
+            let error_msg = e.to_string();
+            if error_msg.contains("password") || error_msg.contains("Password") {
+                if config.password.is_some() {
+                    return Err(DecompressError(DecompError::PasswdIncorrect(error_msg)));
+                } else {
+                    return Err(DecompressError(DecompError::PasswdNeeded(error_msg)));
+                }
+            } else {
+                return Err(DecompressError(DecompError::DecompressErr(e.to_string())));
+            }
         }
 
         // finish and stop timing.

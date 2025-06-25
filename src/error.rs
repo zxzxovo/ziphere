@@ -9,13 +9,25 @@ pub enum Error {
     CompressError(String),
 
     #[error("Failed to decompress: {0}")]
-    DecompressError(String),
+    DecompressError(DecompError),
 
     #[error("Unsupported operation.")]
     Unsupported,
 
     #[error("IO Operation error: {0}")]
     IOError(IsIOError),
+}
+
+#[derive(Debug, Error)]
+pub enum DecompError {
+    #[error("Passwd incorrect: {0}")]
+    PasswdIncorrect(String),
+
+    #[error("Passwd needed: {0}")]
+    PasswdNeeded(String),
+
+    #[error("Decompress Error: {0}")]
+    DecompressErr(String),
 }
 
 #[derive(Debug, Error)]

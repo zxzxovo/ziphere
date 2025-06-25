@@ -4,7 +4,8 @@
 
 use crate::comde;
 use crate::comde::{CompressStats, DecompressStats};
-use crate::error::Error::{CompressError, IOError};
+use crate::error::DecompError::{PasswdIncorrect, PasswdNeeded};
+use crate::error::Error::{CompressError, DecompressError, IOError};
 use crate::error::IsIOError::{OnError, StdIoError};
 use crate::utils::calculate_size;
 use std::fs::File;
@@ -205,16 +206,43 @@ impl comde::Decompress for ZipComde {
 
         // Extract all files
         for i in 0..archive.len() {
-            let mut file = if let Some(ref password) = config.password {
-                // Try to extract with password
-                archive
-                    .by_index_decrypt(i, password.as_bytes())
-                    .map_err(|e| CompressError(format!("Failed to decrypt file: {}", e)))?
+            // First check if the file is encrypted
+            let is_encrypted = {
+                let file_info = archive.by_index_raw(i).map_err(|e| {
+                    DecompressError(crate::error::DecompError::DecompressErr(e.to_string()))
+                })?;
+                file_info.encrypted()
+            };
+
+            let mut file = if is_encrypted {
+                if let Some(ref password) = config.password {
+                    // Try to extract with password
+                    match archive.by_index_decrypt(i, password.as_bytes()) {
+                        Ok(file) => file,
+                        Err(e) => {
+                            // If the error is due to an invalid password, return PasswdIncorrect
+                            if e.to_string().contains("Invalid password") {
+                                return Err(DecompressError(PasswdIncorrect(
+                                    "Invalid password".to_string(),
+                                )));
+                            } else {
+                                return Err(DecompressError(
+                                    crate::error::DecompError::DecompressErr(e.to_string()),
+                                ));
+                            }
+                        }
+                    }
+                } else {
+                    // File is encrypted but no password provided
+                    return Err(DecompressError(PasswdNeeded(
+                        "Password required for encrypted file".to_string(),
+                    )));
+                }
             } else {
                 // Extract without password
-                archive
-                    .by_index(i)
-                    .map_err(|e| CompressError(e.to_string()))?
+                archive.by_index(i).map_err(|e| {
+                    DecompressError(crate::error::DecompError::DecompressErr(e.to_string()))
+                })?
             };
 
             let outpath = match file.enclosed_name() {
