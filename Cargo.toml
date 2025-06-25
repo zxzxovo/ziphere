@@ -17,12 +17,19 @@ path = "src/lib.rs"
 
 [features]
 default = ["all"]
-zip = []
+all = ["zip-all", "sevenz-all", ]
+min = ["zip", "sevenz"]
+# zip
+zip = ["zip/aes-crypto"]
+zip-zstd = ["zip", "zip/zstd"]
+zip-lzma = ["zip", "zip/lzma"]
+zip-deflate = ["zip", "zip/_deflate-any"]
+zip-all = ["zip-zstd", "zip-lzma", "zip-deflate"]
+# 7z
 sevenz = ["sevenz-rust2/aes256", "sevenz-rust2/compress"]
 sevenz-zstd = ["sevenz", "sevenz-rust2/zstd"]
 sevenz-deflate = ["sevenz", "sevenz-rust2/deflate"]
 sevenz-all = ["sevenz-zstd", "sevenz-deflate"]
-all = ["zip", "sevenz-all", ]
 
 [profile.release]
 opt-level = 3
