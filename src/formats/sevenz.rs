@@ -96,6 +96,12 @@ impl SevenzConfigs {
         self
     }
 
+    /// use ZStandard with default arguments.
+    pub fn use_zstd(mut self) -> Self {
+        let m = sevenz_rust2::ZStandardOptions::default();
+        self.methods.push(m.into());
+    }
+
     /// Use ZStandard with given compression level.
     #[cfg(feature = "sevenz-zstd")]
     pub fn use_zstd_with_level(mut self, level: u32) -> Self {
