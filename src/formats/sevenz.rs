@@ -1,7 +1,5 @@
 //! `.7z` format support.
 
-#![cfg(feature = "sevenz")]
-
 use crate::comde;
 use crate::comde::{CompressStats, DecompressStats};
 use crate::error::DecompError;
@@ -29,17 +27,17 @@ impl comde::Compress for SevenzComde {
 
         // Start timing.
         let start_time = std::time::Instant::now();
-        let origin_size = calculate_size(&input)?;
-        let mut writer = sevenz_rust2::SevenZWriter::create(&output)
+        let origin_size = calculate_size(input)?;
+        let mut writer = sevenz_rust2::SevenZWriter::create(output)
             .map_err(|e| CompressError(e.to_string()))?;
 
         writer.set_content_methods(config.methods);
 
         // Do solid_compress if enable.
         if !config.solid_compress {
-            writer.push_source_path_non_solid(&input, |_| true)
+            writer.push_source_path_non_solid(input, |_| true)
         } else {
-            writer.push_source_path(&input, |_| true)
+            writer.push_source_path(input, |_| true)
         }
         .map_err(|e| CompressError(e.to_string()))?;
 

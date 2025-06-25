@@ -1,7 +1,5 @@
 //! `.zip` format support.
 
-#![cfg(feature = "zip")]
-
 use crate::comde;
 use crate::comde::{CompressStats, DecompressStats};
 use crate::error::DecompError::{PasswdIncorrect, PasswdNeeded};
@@ -32,10 +30,10 @@ impl comde::Compress for ZipComde {
 
         // Start timing.
         let start_time = std::time::Instant::now();
-        let origin_size = calculate_size(&input)?;
+        let origin_size = calculate_size(input)?;
 
         // Create a file, if the file already exists, truncate it.
-        let file = File::create(&output).map_err(|e| IOError(StdIoError(e)))?;
+        let file = File::create(output).map_err(|e| IOError(StdIoError(e)))?;
         let options = config.file_options;
         let mut zip = ZipWriter::new(file);
 
@@ -197,7 +195,7 @@ impl comde::Decompress for ZipComde {
 
         // start timing.
         let start_time = std::time::Instant::now();
-        let compressed_size = std::fs::metadata(&input)
+        let compressed_size = std::fs::metadata(input)
             .map_err(|e| IOError(StdIoError(e)))?
             .len();
 
@@ -284,7 +282,7 @@ impl comde::Decompress for ZipComde {
 
         // finish.
         let duration = start_time.elapsed();
-        let decompressed_size = calculate_size(&output)?;
+        let decompressed_size = calculate_size(output)?;
         Ok(DecompressStats::new(
             compressed_size,
             decompressed_size,
