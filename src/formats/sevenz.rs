@@ -9,6 +9,7 @@ use crate::utils::calculate_size;
 use sevenz_rust2::SevenZMethodConfiguration;
 use std::path::Path;
 
+#[derive(Debug)]
 pub struct SevenzComde;
 
 impl comde::Compress for SevenzComde {
@@ -28,8 +29,8 @@ impl comde::Compress for SevenzComde {
         // Start timing.
         let start_time = std::time::Instant::now();
         let origin_size = calculate_size(input)?;
-        let mut writer = sevenz_rust2::SevenZWriter::create(output)
-            .map_err(|e| CompressError(e.to_string()))?;
+        let mut writer =
+            sevenz_rust2::SevenZWriter::create(output).map_err(|e| CompressError(e.to_string()))?;
 
         writer.set_content_methods(config.methods);
 
@@ -164,15 +165,15 @@ impl comde::Decompress for SevenzComde {
         // Handle specific 7z errors
         if let Err(e) = result {
             let error_msg = e.to_string();
-            if error_msg.contains("password") || error_msg.contains("Password") {
+            return if error_msg.contains("password") || error_msg.contains("Password") {
                 if config.password.is_some() {
-                    return Err(DecompressError(DecompError::PasswdIncorrect(error_msg)));
+                    Err(DecompressError(DecompError::PasswdIncorrect(error_msg)))
                 } else {
-                    return Err(DecompressError(DecompError::PasswdNeeded(error_msg)));
+                    Err(DecompressError(DecompError::PasswdNeeded(error_msg)))
                 }
             } else {
-                return Err(DecompressError(DecompError::DecompressErr(e.to_string())));
-            }
+                Err(DecompressError(DecompError::DecompressErr(e.to_string())))
+            };
         }
 
         // finish and stop timing.

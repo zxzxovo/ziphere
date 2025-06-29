@@ -12,6 +12,7 @@ use std::path::Path;
 use zip::write::{FileOptions, SimpleFileOptions};
 use zip::{CompressionMethod, ZipWriter};
 
+#[derive(Debug)]
 pub struct ZipComde;
 
 impl comde::Compress for ZipComde {
@@ -225,15 +226,15 @@ impl comde::Decompress for ZipComde {
                         Ok(file) => file,
                         Err(e) => {
                             // If the error is due to an invalid password, return PasswdIncorrect
-                            if e.to_string().contains("Invalid password") {
-                                return Err(DecompressError(PasswdIncorrect(
+                            return if e.to_string().contains("Invalid password") {
+                                Err(DecompressError(PasswdIncorrect(
                                     "Invalid password".to_string(),
-                                )));
+                                )))
                             } else {
-                                return Err(DecompressError(
-                                    crate::error::DecompError::DecompressErr(e.to_string()),
-                                ));
-                            }
+                                Err(DecompressError(crate::error::DecompError::DecompressErr(
+                                    e.to_string(),
+                                )))
+                            };
                         }
                     }
                 } else {

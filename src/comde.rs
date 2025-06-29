@@ -1,4 +1,4 @@
-//! Operation define to compress and decompress.
+//! Interface for compressing and decompressing.
 
 use crate::Result;
 use std::path::Path;
@@ -6,12 +6,12 @@ use std::time::Duration;
 
 /// Common configs for compression or decompression.
 pub trait ComdeConfig: Sized {
-    /// Start building Config.
+    /// New a configuration struct.
     fn new() -> Self;
 
-    /// Configure completed and get the result.
-    fn build(self) -> Result<Self> {
-        Ok(self)
+    /// Finally do something and then return
+    fn build(self) -> Self {
+        self
     }
 }
 
@@ -24,6 +24,16 @@ pub trait Compress {
         output: P,
         config: Self::Configs,
     ) -> Result<CompressStats>;
+}
+
+/// The formats that support `decompress` option should implement.
+pub trait Decompress {
+    type Configs: ComdeConfig;
+    fn decompress_file<P: AsRef<Path>>(
+        input: P,
+        output: P,
+        config: Self::Configs,
+    ) -> Result<DecompressStats>;
 }
 
 /// The stats that this compression procession have.
@@ -42,17 +52,6 @@ impl CompressStats {
         }
     }
 }
-
-/// The formats that support `decompress` option should implement.
-pub trait Decompress {
-    type Configs: ComdeConfig;
-    fn decompress_file<P: AsRef<Path>>(
-        input: P,
-        output: P,
-        config: Self::Configs,
-    ) -> Result<DecompressStats>;
-}
-
 /// The stats that this decompression procession have.
 pub struct DecompressStats {
     pub compressed_size: u64,
