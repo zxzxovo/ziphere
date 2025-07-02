@@ -38,14 +38,14 @@ impl Formats {
 /// The Configuration builder.
 #[derive(Debug)]
 pub enum Configs {
-    #[cfg(feature="zip")]
+    #[cfg(feature = "zip")]
     ZipConfig(ZipConfig),
-    #[cfg(feature="zip")]
+    #[cfg(feature = "zip")]
     ZipDeConfig(ZipDeConfig),
 
-    #[cfg(feature="sevenz")]
+    #[cfg(feature = "sevenz")]
     SevenzConfig(SevenzConfigs),
-    #[cfg(feature="sevenz")]
+    #[cfg(feature = "sevenz")]
     SevenzDeConfig(SevenzDeConfig),
 }
 
@@ -53,7 +53,9 @@ impl Configs {
     pub fn new_compress(format: &str) -> Configs {
         match format {
             "zip" | "ZIP" | "Zip" => Configs::ZipConfig(ZipConfig::new()),
-            "7z" | "7Z" | "sevenz" | "sevenZ" | "SevenZ" => Configs::SevenzConfig(SevenzConfigs::new()),
+            "7z" | "7Z" | "sevenz" | "sevenZ" | "SevenZ" => {
+                Configs::SevenzConfig(SevenzConfigs::new())
+            }
             _ => panic!("Unsupported format."),
         }
     }
@@ -61,7 +63,9 @@ impl Configs {
     pub fn new_decompress(format: &str) -> Configs {
         match format {
             "zip" | "ZIP" | "Zip" => Configs::ZipDeConfig(ZipDeConfig::new()),
-            "7z" | "7Z" | "sevenz" | "sevenZ" | "SevenZ" => Configs::SevenzDeConfig(SevenzDeConfig::new()),
+            "7z" | "7Z" | "sevenz" | "sevenZ" | "SevenZ" => {
+                Configs::SevenzDeConfig(SevenzDeConfig::new())
+            }
             _ => panic!("Unsupported format."),
         }
     }

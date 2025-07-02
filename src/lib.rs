@@ -17,5 +17,5 @@ pub mod formats;
 mod utils;
 
 pub use error::Result;
-pub use formats::Formats;
 pub use formats::Configs;
+pub use formats::Formats;

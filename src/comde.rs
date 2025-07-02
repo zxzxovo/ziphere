@@ -43,6 +43,18 @@ pub struct CompressStats {
     pub time_cost: Duration,
 }
 
+impl std::fmt::Display for CompressStats {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Origin size: {}\nCompressed size: {}\nTime cost: {}s\n",
+            self.origin_size,
+            self.compressed_size,
+            self.time_cost.as_secs()
+        )
+    }
+}
+
 impl CompressStats {
     pub(crate) fn new(origin_size: u64, compressed_size: u64, time_cost: Duration) -> Self {
         Self {
@@ -66,5 +78,17 @@ impl DecompressStats {
             decompressed_size,
             time_cost,
         }
+    }
+}
+
+impl std::fmt::Display for DecompressStats {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Origin size: {}\nDeompressed size: {}\nTime cost: {}s\n",
+            self.compressed_size,
+            self.decompressed_size,
+            self.time_cost.as_secs()
+        )
     }
 }
