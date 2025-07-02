@@ -54,6 +54,7 @@ impl comde::Compress for SevenzComde {
 }
 
 /// The compression configuration of 7z.
+#[derive(Debug)]
 pub struct SevenzConfigs {
     solid_compress: bool,
     methods: Vec<SevenZMethodConfiguration>,
@@ -121,6 +122,7 @@ impl SevenzConfigs {
 }
 
 /// Decompression configuration for 7z.
+#[derive(Debug)]
 pub struct SevenzDeConfig {
     password: Option<String>,
 }

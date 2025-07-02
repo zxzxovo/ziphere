@@ -94,6 +94,7 @@ impl comde::Compress for ZipComde {
 }
 
 /// The compression configuration of zip.
+#[derive(Debug)]
 pub struct ZipConfig {
     level_supported: bool,
     file_options: SimpleFileOptions,
@@ -163,6 +164,8 @@ impl ZipConfig {
     }
 }
 
+/// Configuration for decompressing.
+#[derive(Debug)]
 pub struct ZipDeConfig {
     password: Option<String>,
 }
