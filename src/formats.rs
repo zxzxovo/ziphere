@@ -23,7 +23,6 @@ pub enum Formats {
     #[cfg(feature = "sevenz")]
     SevenZ(SevenzComde),
 }
-
 impl Formats {
     /// Get a new compressor.
     pub fn new_with(format: &str) -> Formats {
@@ -69,13 +68,4 @@ impl Configs {
             _ => panic!("Unsupported format."),
         }
     }
-}
-
-/// Compression level options.
-#[derive(Clone, Copy)]
-pub enum CompressLevel {
-    Fast,
-    Balanced,
-    Best,
-    Custom(u32),
 }
