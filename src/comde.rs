@@ -1,94 +1,35 @@
-//! Interface for compressing and decompressing.
+//! Comde Module
+//! TODO
 
-use crate::Result;
 use std::path::Path;
-use std::time::Duration;
+use crate::error::{AppError, ComdeError};
 
-/// Common configs for compression or decompression.
-pub trait ComdeConfig: Sized {
-    /// New a configuration struct.
-    fn new() -> Self;
+pub(crate) type ComdeResult<T> = std::result::Result<T, ComdeError>;
 
-    /// Finally do something and then return
-    fn build(self) -> Self {
-        self
-    }
+pub trait Comde {
+    type Config: ComdeCfg;
+    fn compress(
+        input: impl AsRef<Path>,
+        output: impl AsRef<Path>,
+        config: &Self::Config,
+    ) -> ComdeResult<CompressStatus>;
+
+    fn decompress(
+        input: impl AsRef<Path>,
+        output: impl AsRef<Path>,
+        config: &Self::Config,
+    ) -> ComdeResult<DecompressStatus>;
 }
 
-/// The formats that support `compress` option should implement.
-pub trait Compress {
-    type Configs: ComdeConfig;
-    fn compress_file<P: AsRef<Path>>(
-        &self,
-        input: P,
-        output: P,
-        config: Self::Configs,
-    ) -> Result<CompressStats>;
+pub trait ComdeCfg {
+
 }
 
-/// The formats that support `decompress` option should implement.
-pub trait Decompress {
-    type Configs: ComdeConfig;
-    fn decompress_file<P: AsRef<Path>>(
-        input: P,
-        output: P,
-        config: Self::Configs,
-    ) -> Result<DecompressStats>;
+pub struct CompressStatus {
+    origin_size: u64,
+    compressed_size: u64,
 }
 
-/// The stats that this compression procession have.
-pub struct CompressStats {
-    pub origin_size: u64,
-    pub compressed_size: u64,
-    pub time_cost: Duration,
-}
+pub struct DecompressStatus {
 
-impl std::fmt::Display for CompressStats {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Origin size: {}\nCompressed size: {}\nTime cost: {}s\n",
-            self.origin_size,
-            self.compressed_size,
-            self.time_cost.as_secs()
-        )
-    }
-}
-
-impl CompressStats {
-    pub(crate) fn new(origin_size: u64, compressed_size: u64, time_cost: Duration) -> Self {
-        Self {
-            origin_size,
-            compressed_size,
-            time_cost,
-        }
-    }
-}
-/// The stats that this decompression procession have.
-pub struct DecompressStats {
-    pub compressed_size: u64,
-    pub decompressed_size: u64,
-    pub time_cost: Duration,
-}
-
-impl DecompressStats {
-    pub(crate) fn new(compressed_size: u64, decompressed_size: u64, time_cost: Duration) -> Self {
-        Self {
-            compressed_size,
-            decompressed_size,
-            time_cost,
-        }
-    }
-}
-
-impl std::fmt::Display for DecompressStats {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Origin size: {}\nDeompressed size: {}\nTime cost: {}s\n",
-            self.compressed_size,
-            self.decompressed_size,
-            self.time_cost.as_secs()
-        )
-    }
 }

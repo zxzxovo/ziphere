@@ -41,7 +41,7 @@ strip = "debuginfo"
 [dependencies]
 thiserror = "2"
 walkdir = "2.5"
-sevenz-rust2 = "0.14"
+sevenz-rust2 = "0.17.1"
 zip = "4.1"
 
 
