@@ -1,40 +1,39 @@
 //! TODO
 
+use crate::comde::{CompressStatus, DecompressStatus};
+use crate::error::ComdeError::Other;
+use crate::error::{ComdeError, Unimplemented};
 use std::path::Path;
-use crate::comde::{Comde, ComdeCfg, CompressStatus, DecompressStatus, ComdeResult};
 
 pub struct ZipComde;
 
-impl Comde for ZipComde {
-    type Config = ZipCfg;
-
-    fn compress(input: impl AsRef<Path>, output: impl AsRef<Path>, config: &Self::Config) -> ComdeResult<CompressStatus> {
-        todo!()
+impl ZipComde {
+    pub fn compress<P: AsRef<Path>>(
+        self,
+        input: P,
+        output: P,
+        config: &ZipCfg,
+    ) -> Result<CompressStatus, ComdeError> {
+        let (input, output) = (input.as_ref(), output.as_ref());
+        Err(Other(Unimplemented::Unfinished))
     }
 
-    fn decompress(input: impl AsRef<Path>, output: impl AsRef<Path>, config: &Self::Config) -> ComdeResult<DecompressStatus> {
-        todo!()
+    pub fn decompress<P: AsRef<Path>>(
+        self,
+        input: P,
+        output: P,
+        config: &ZipCfg,
+    ) -> Result<DecompressStatus, ComdeError> {
+        let (input, output) = (input.as_ref(), output.as_ref());
+        Err(Other(Unimplemented::Unfinished))
     }
 }
 
 pub struct ZipCfg;
 
-impl ComdeCfg for ZipCfg {
-
-}
-
-
-
-use crate::view::{Viewer, ViewOpener, Archive, };
-
-impl ViewOpener for ZipCfg {
-    fn open_view() -> crate::view::ViewResult<Archive> {
-        todo!()
-    }
-}
-
-impl Viewer for ZipCfg {
-    fn name() -> &'static str {
-        todo!()
+impl ZipCfg {
+    
+    pub fn new() -> ZipCfg {
+        ZipCfg
     }
 }

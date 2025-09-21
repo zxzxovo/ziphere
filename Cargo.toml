@@ -15,6 +15,10 @@ repository = "https://github.com/zxzxovo/ziphere"
 name = "ziphere"
 path = "src/lib.rs"
 
+[[bin]]
+name = "ziphere"
+path = "src/main.rs"
+
 [features]
 default = ["all"]
 all = ["zip-all", "sevenz-all", ]
@@ -39,10 +43,11 @@ codegen-units = 1
 strip = "debuginfo"
 
 [dependencies]
-thiserror = "2"
-walkdir = "2.5"
-sevenz-rust2 = "0.17.1"
-zip = "4.1"
+thiserror = "^2"
+walkdir = "^2.5"
+sevenz-rust2 = "^0.19"
+zip = "^5"
+clap = { version = "4.5.48", features = ["derive"] }
 
 
 [package.metadata.docs.rs]

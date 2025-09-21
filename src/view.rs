@@ -1,23 +1,25 @@
-//!
 //! TODO
+//!
+use std::path::{Path, PathBuf};
 
-use crate::error::ViewError;
-
-pub(crate) type ViewResult<T> = std::result::Result<T, ViewError>;
-
-pub trait ViewOpener {
-    fn open_view() -> ViewResult<Archive>;
-}
-
-pub trait Viewer {
-
-    fn name() -> &'static str;
-}
-
-pub struct Archive {
+/// # Archive
+///
+pub struct Archive<'a> {
+    path: &'a Path,
 
 }
 
-impl Archive {
-    
+impl <'a> Archive<'a> {
+
+    ///
+    pub fn new<P: AsRef<Path>>(path: &'a P) -> Archive<'a> {
+        Archive {
+            path: path.as_ref(),
+        }
+    }
+}
+
+/// # Entry
+pub struct Entry {
+
 }

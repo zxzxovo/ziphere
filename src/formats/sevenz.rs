@@ -1,40 +1,59 @@
 //! TODO
 
+use crate::comde::{CompressStatus, DecompressStatus};
+use crate::error::ComdeError::Other;
+use crate::error::{ComdeError, Unimplemented};
 use std::path::Path;
-use crate::comde::{Comde, ComdeCfg, CompressStatus, DecompressStatus, ComdeResult};
 
-pub struct SevenZ;
+pub struct SevenZComde;
 
-impl Comde for SevenZ {
-    type Config = SevenZCfg;
+impl SevenZComde {
+    pub fn compress<P: AsRef<Path>>(
+        self,
+        input: P,
+        output: P,
+        config: &SevenZCfg,
+    ) -> Result<CompressStatus, ComdeError> {
+        let (input, output) = (input.as_ref(), output.as_ref());
 
-    fn compress(input: impl AsRef<Path>, output: impl AsRef<Path>, config: &Self::Config) -> ComdeResult<CompressStatus> {
-        todo!()
+        Err(Other(Unimplemented::Unfinished))
     }
 
-    fn decompress(input: impl AsRef<Path>, output: impl AsRef<Path>, config: &Self::Config) -> ComdeResult<DecompressStatus> {
-        todo!()
-    }
-}
+    pub fn decompress<P: AsRef<Path>>(
+        self,
+        input: P,
+        output: P,
+        config: &SevenZCfg,
+    ) -> Result<DecompressStatus, ComdeError> {
+        let (input, output) = (input.as_ref(), output.as_ref());
 
-pub struct SevenZCfg;
-
-impl ComdeCfg for SevenZCfg {
-
-}
-
-
-
-use crate::view::{Viewer, ViewOpener, Archive, ViewResult};
-
-impl ViewOpener for SevenZCfg {
-    fn open_view() -> ViewResult<Archive> {
-        todo!()
+        Err(Other(Unimplemented::Unfinished))
     }
 }
 
-impl Viewer for SevenZCfg {
-    fn name() -> &'static str {
-        todo!()
+pub struct SevenZCfg {
+    solid_compress: bool,
+    password: Option<String>,
+}
+
+impl SevenZCfg {
+
+    pub fn new() -> SevenZCfg {
+        SevenZCfg {
+            solid_compress: false,
+            password: None,
+        }
+    }
+
+    /// S
+    pub fn set_solid_compress(mut self, enabled: bool) -> SevenZCfg {
+        self.solid_compress = enabled;
+        self
+    }
+
+    /// Encrypt with AES256.
+    pub fn set_password(mut self, password: String) -> SevenZCfg {
+        self.password = Some(password);
+        self
     }
 }

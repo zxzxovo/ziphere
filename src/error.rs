@@ -7,6 +7,9 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum AppError {
+
+    #[error("{0}")]
+    FsError(String),
     
     #[error("Error when compressing/decompressing.")]
     ComdeError(#[from] ComdeError),
@@ -20,10 +23,25 @@ pub enum AppError {
 
 #[derive(Debug, Error)]
 pub enum ComdeError {
-    
+
+    #[error("Error when compressing/decompressing zip: {0}")]
+    ZipError(String),
+
+    #[error("Error when compressing/decompressing 7z: {0}")]
+    SevenZError(String),
+
+    #[error("Unfinished")]
+    Other(#[from] Unimplemented)
 }
 
 #[derive(Debug, Error)]
 pub enum ViewError {
     
+}
+
+#[derive(Debug, Error)]
+pub enum Unimplemented {
+
+    #[error("Unimplemented feature")]
+    Unfinished
 }

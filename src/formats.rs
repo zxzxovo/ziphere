@@ -1,16 +1,36 @@
 //! TODO
 
+#[cfg(feature = "sevenz")]
 pub mod sevenz;
+
+#[cfg(feature = "zip")]
 pub mod zip;
 
-
-pub enum Formats {
-    SevenZ,
-    Zip
-}
+pub struct Formats;
 
 impl Formats {
-    pub fn get_support_formats() -> &'static[&'static str] {
-        &["SevenZ", "Zip"][..]
+
+    #[cfg(feature = "zip")]
+    pub fn get_zip() -> zip::ZipComde {
+        zip::ZipComde
+    }
+
+    #[cfg(feature = "sevenz")]
+    pub fn get_7z() -> sevenz::SevenZComde {
+        sevenz::SevenZComde
+    }
+}
+
+pub struct Configs;
+
+impl Configs {
+    #[cfg(feature = "zip")]
+    pub fn get_zip() -> zip::ZipCfg {
+        zip::ZipCfg::new()
+    }
+
+    #[cfg(feature = "sevenz")]
+    pub fn get_7z() -> sevenz::SevenZCfg {
+        sevenz::SevenZCfg::new()
     }
 }
