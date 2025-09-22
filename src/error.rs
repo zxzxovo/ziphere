@@ -18,6 +18,7 @@ pub enum AppError {
     ViewError(#[from] ViewError),
     
     #[error("Unknown error.")]
+    #[warn(dead_code)]
     OtherError(),
 }
 

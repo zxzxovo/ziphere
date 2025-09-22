@@ -10,13 +10,13 @@ pub mod comde;
 pub mod view;
 
 pub fn run_test() {
-    let a = formats::Formats::get_zip();
+    let _a = formats::Formats::get_zip();
     let b = formats::Formats::get_7z();
     
-    let ac = formats::Configs::get_zip();
+    let _ac = formats::Configs::get_zip();
     let bc = formats::Configs::get_7z().set_solid_compress(true);
     
-    b.compress("a", "b", &bc).unwrap();
+    b.compress_f(&["a"], "b", &bc).unwrap();
     
     
 }

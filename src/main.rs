@@ -18,7 +18,6 @@ fn main() {
     
     match app.command {
         Commands::Hello => println!("Hello"),
-        _ => println!("Ooops")
     }
 
 }

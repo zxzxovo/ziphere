@@ -33,7 +33,9 @@ zip-all = ["zip-zstd", "zip-lzma", "zip-deflate"]
 sevenz = ["sevenz-rust2/aes256", "sevenz-rust2/compress"]
 sevenz-zstd = ["sevenz", "sevenz-rust2/zstd"]
 sevenz-deflate = ["sevenz", "sevenz-rust2/deflate"]
-sevenz-all = ["sevenz-zstd", "sevenz-deflate"]
+sevenz-bzip2 = ["sevenz", "sevenz-rust2/bzip2"]
+sevenz-ppmd = ["sevenz", "sevenz-rust2/ppmd"]
+sevenz-all = ["sevenz-zstd", "sevenz-deflate", "sevenz-bzip2", "sevenz-ppmd"]
 
 [profile.release]
 opt-level = 3
