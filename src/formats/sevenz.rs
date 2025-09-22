@@ -1,7 +1,15 @@
-//! # 7Z Support.
+//! # 7Z Support
 //! We have 2 struct here:
 //! - SevenZComde (ZST)
 //! - SevenZCfg
+//! 
+//! # Compress & Decompress
+//! 
+//! [todo]
+//! 
+//! # View Operation
+//! 
+//! [todo]
 //! 
 
 use crate::comde::{CompressStatus, DecompressStatus};
@@ -14,8 +22,9 @@ use std::time::Instant;
 
 pub struct SevenZComde;
 
-pub fn todo() {
-    todo!("View to be implemented")
+fn todo() {
+    todo!("View to be implemented");
+    todo!("is_password_needed to be implemented. - need View");
 }
 
 impl SevenZComde {
@@ -70,10 +79,15 @@ impl SevenZComde {
         output: P,
         config: &SevenZCfg
     ) -> Result<DecompressStatus, ComdeError> {
+        let cr = utils::CountingReader::new(input);
         let time_begin = Instant::now();
-        sevenz_rust2::decompress_with_password(input, output, config.password.clone()).map_err(|e| ComdeError::SevenZError(e.to_string()))?;
+
+        sevenz_rust2::decompress_with_password(cr.share(), &output, config.password.clone()).map_err(|e| ComdeError::SevenZError(e.to_string()))?;
+        let size_read = cr.bytes_read();
+        let size_decompressed = utils::size_of(output).map_err(|e| ComdeError::SevenZError(e.to_string()))?;
         let time_finished = time_begin.elapsed();
-        Ok(DecompressStatus::new(1, 1, time_finished))
+
+        Ok(DecompressStatus::new(size_read, size_decompressed, time_finished))
     }
 
     /// Decompress an archive of given path and write into a file.
